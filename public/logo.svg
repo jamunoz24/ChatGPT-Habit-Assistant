@@ -1,0 +1,6 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Outer Circle -->
+    <circle cx="100" cy="100" r="80" stroke="orange" stroke-width="10" fill="none"/>
+    <!-- Letter h -->
+    <text x="65" y="135" font-size="100" font-family="Arial" fill="orange" font-weight="bold">h</text>
+</svg>
