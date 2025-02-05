@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, KeyboardEvent } from 'react';
 import { OpenAI } from 'openai';
+import { ChatCompletionTool } from 'openai/resources/index.mjs';
 
 const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -10,6 +11,42 @@ const ChatBox: React.FC = () => {
   const [message, setMessage] = useState<string>('');
   const [response, setResponse] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+
+  const tools: ChatCompletionTool[] = [{
+    'type': 'function',
+    'function': {
+      'name': 'get_plan',
+      'description': 'Create a habit plan for the user.',
+      'parameters': {
+        'type': 'object',
+        'properties': {
+          'message': {
+            'type': 'string',
+            'description': 'Message that will be displayed to the user.'
+          },
+          'frequency': {
+            'type': 'object',
+            'desecription': 'Days that are allocated to the habit.',
+            'sun': { 'type': 'boolean' },
+            'mon': { 'type': 'boolean' },
+            'tue': { 'type': 'boolean' },
+            'wed': { 'type': 'boolean' },
+            'thu': { 'type': 'boolean' },
+            'fri': { 'type': 'boolean' },
+            'sat': { 'type': 'boolean' }
+          },
+          'time': {
+            'type': 'object',
+            'description': 'Amount of time recommended for the habit, in hours and minutes',
+            'hrs': { 'type': 'number'},
+            'mins': { 'type': 'number'},
+          }
+        },
+        required: ['message'],
+      },
+      strict: true
+    }
+  }];
 
   const handleSend = async () => {
     if (message.trim() === '') return;
@@ -24,8 +61,13 @@ const ChatBox: React.FC = () => {
         model: 'gpt-4o-mini',
         messages: [
           { role: 'developer', 
-            content: 'You are to help the user develop a habit plan to improve whatever they request. If the content has nothing to do with habits, self-improvement, or improvement of a skill, simply tell the user to try again with one of these topics in mind.'},
-          { role: 'user', content: message }],
+            content:
+              'You are to help the user develop a habit plan to improve whatever they request. If the content has nothing to do with habits, self-improvement, or improvement of a skill, create an example. Keep the format as plain text (no markdown formatting). Once you finish'
+          },
+          { role: 'user', content: message }
+        ],
+        tools,
+        store: true,
       });
 
       setResponse(chatCompletion.choices[0]?.message?.content || 'No Response.');
