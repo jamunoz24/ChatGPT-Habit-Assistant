@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import GoogleAuth from './components/GoogleAuth'
 import ChatBox from './components/Chatbox'
+import Week from './components/Week'
 import './App.css'
 
 function App() {
   const [user, setUser] = useState<any>(null);
+  const [habitPlan, setHabitPlan] = useState<any>(null);
 
   return (
     <div className='min-h-screen flex flex-col items-center p-6'>
@@ -12,7 +14,8 @@ function App() {
       {user ? (
         <div className='w-[33wv] min-w-[400px] p-6 rounded-lg'>
           <p className='text-lg mb-6'>Welcome, {user.name}</p>
-          <ChatBox />
+          <ChatBox setHabitPlan={setHabitPlan}/>
+          <Week habitPlan={habitPlan}/>
         </div>
       ) : (
         <GoogleAuth onSuccess={(userData) => setUser(userData)} />
@@ -21,4 +24,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
