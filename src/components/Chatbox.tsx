@@ -26,25 +26,34 @@ const ChatBox: React.FC = () => {
           },
           'frequency': {
             'type': 'object',
-            'desecription': 'Days that are allocated to the habit.',
-            'sun': { 'type': 'boolean' },
-            'mon': { 'type': 'boolean' },
-            'tue': { 'type': 'boolean' },
-            'wed': { 'type': 'boolean' },
-            'thu': { 'type': 'boolean' },
-            'fri': { 'type': 'boolean' },
-            'sat': { 'type': 'boolean' }
+            'description': 'Days of the week that are allocated to the habit.',
+            'properties': {
+              'sun': { 'type': 'boolean' },
+              'mon': { 'type': 'boolean' },
+              'tue': { 'type': 'boolean' },
+              'wed': { 'type': 'boolean' },
+              'thu': { 'type': 'boolean' },
+              'fri': { 'type': 'boolean' },
+              'sat': { 'type': 'boolean' }
+            },
+            'required': ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+            'additionalProperties': false
           },
           'time': {
             'type': 'object',
             'description': 'Amount of time recommended for the habit, in hours and minutes',
-            'hrs': { 'type': 'number'},
-            'mins': { 'type': 'number'},
+            'properties': {
+              'hrs': { 'type': 'number'},
+              'mins': { 'type': 'number'},
+            },
+            'required': ['hrs', 'mins'],
+            'additionalProperties': false
           }
         },
-        required: ['message'],
+        'required': ['message', 'frequency', 'time'],
+        'additionalProperties': false
       },
-      strict: true
+      'strict': true
     }
   }];
 
@@ -62,7 +71,7 @@ const ChatBox: React.FC = () => {
         messages: [
           { role: 'developer', 
             content:
-              'You are to help the user develop a habit plan to improve whatever they request. If the content has nothing to do with habits, self-improvement, or improvement of a skill, create an example. Keep the format as plain text (no markdown formatting). Once you finish'
+              'You are to help the user develop a habit plan to improve whatever they request. If the content has nothing to do with habits, self-improvement, or improvement of a skill, create an example. Create a schedule based on the tools provided, as a JSON object.'
           },
           { role: 'user', content: message }
         ],
@@ -70,7 +79,17 @@ const ChatBox: React.FC = () => {
         store: true,
       });
 
-      setResponse(chatCompletion.choices[0]?.message?.content || 'No Response.');
+      // Retrieving call
+      const toolCall = chatCompletion.choices[0]?.message?.tool_calls?.[0];
+
+      if (toolCall && toolCall.type === 'function') {
+        const functionArgs = JSON.parse(toolCall.function.arguments);
+        console.log(functionArgs);
+
+        setResponse(functionArgs.message);
+      }
+
+
     } catch (error) {
       console.error('Error:', error);
       setResponse('Failed to fetch response.');
