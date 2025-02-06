@@ -12,6 +12,7 @@ const ChatBox: React.FC = () => {
   const [response, setResponse] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
+  // Function Definitions
   const tools: ChatCompletionTool[] = [{
     'type': 'function',
     'function': {
@@ -20,6 +21,14 @@ const ChatBox: React.FC = () => {
       'parameters': {
         'type': 'object',
         'properties': {
+          'habit_name': {
+            'type': 'string',
+            'description': 'Name of the habit the user wants to currently work on.'
+          },
+          'emoji': {
+            'type': 'string',
+            'description': 'Emoji representing the habit.'
+          },
           'frequency': {
             'type': 'object',
             'description': 'Days of the week that are allocated to the habit.',
@@ -50,7 +59,7 @@ const ChatBox: React.FC = () => {
             'description': 'Message that will be displayed to the user.'
           },
         },
-        'required': ['message', 'frequency', 'time'],
+        'required': ['message', 'frequency', 'time', 'habit_name', 'emoji'],
         'additionalProperties': false
       },
       'strict': true
@@ -58,6 +67,7 @@ const ChatBox: React.FC = () => {
   }];
 
   const handleSend = async () => {
+    // Check for empty string
     if (message.trim() === '') return;
 
     // Process the message here (e.g., send to an API or update state)
@@ -71,7 +81,7 @@ const ChatBox: React.FC = () => {
         messages: [
           { role: 'developer', 
             content:
-              'You are to help the user develop a habit plan to improve whatever they request. If the content has nothing to do with habits, self-improvement, or improvement of a skill, create an example. Create a schedule based on the tools provided, as a JSON object. The time allocated to the habit should be the same each day. Fill out the message field last, and in it explain to the user what the weekly schedule looks like.'
+              'You are to help the user develop a habit plan to improve whatever they request. If the content has nothing to do with habits, self-improvement, or improvement of a skill, create an example. Create a schedule based on the tools provided, as a JSON object. The time allocated to the habit should be the same each day. Fill out the message field last, and in it explain to the user what the weekly schedule consists of.'
           },
           { role: 'user', content: message }
         ],
@@ -89,7 +99,6 @@ const ChatBox: React.FC = () => {
         setResponse(functionArgs.message);
       }
 
-
     } catch (error) {
       console.error('Error:', error);
       setResponse('Failed to fetch response.');
@@ -97,7 +106,6 @@ const ChatBox: React.FC = () => {
 
     setLoading(false);
     setMessage('');
-
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -132,7 +140,7 @@ const ChatBox: React.FC = () => {
 
       {/* Display ChatGPT Response */}
       {response && (
-        <div className="mt-4 border rounded-lg bg-gray-800 text-white">
+        <div className="mt-4 border rounded-lg bg-gray-900 text-white">
           <strong>ChatGPT:</strong> {response}
         </div>
       )}
