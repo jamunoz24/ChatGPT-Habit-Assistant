@@ -20,10 +20,6 @@ const ChatBox: React.FC = () => {
       'parameters': {
         'type': 'object',
         'properties': {
-          'message': {
-            'type': 'string',
-            'description': 'Message that will be displayed to the user.'
-          },
           'frequency': {
             'type': 'object',
             'description': 'Days of the week that are allocated to the habit.',
@@ -48,7 +44,11 @@ const ChatBox: React.FC = () => {
             },
             'required': ['hrs', 'mins'],
             'additionalProperties': false
-          }
+          },
+          'message': {
+            'type': 'string',
+            'description': 'Message that will be displayed to the user.'
+          },
         },
         'required': ['message', 'frequency', 'time'],
         'additionalProperties': false
@@ -71,7 +71,7 @@ const ChatBox: React.FC = () => {
         messages: [
           { role: 'developer', 
             content:
-              'You are to help the user develop a habit plan to improve whatever they request. If the content has nothing to do with habits, self-improvement, or improvement of a skill, create an example. Create a schedule based on the tools provided, as a JSON object.'
+              'You are to help the user develop a habit plan to improve whatever they request. If the content has nothing to do with habits, self-improvement, or improvement of a skill, create an example. Create a schedule based on the tools provided, as a JSON object. The time allocated to the habit should be the same each day. Fill out the message field last, and in it explain to the user what the weekly schedule looks like.'
           },
           { role: 'user', content: message }
         ],
