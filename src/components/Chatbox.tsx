@@ -88,7 +88,7 @@ const ChatBox: React.FC<{ setHabitPlan: (plan: any) => void }> = ({ setHabitPlan
       {/* Display ChatGPT Response */}
       {response && (
         <div className="mt-5 text-white">
-          {response}
+          <strong>ChatGPT: </strong>{response}
         </div>
       )}
 
